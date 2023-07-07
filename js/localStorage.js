@@ -10,8 +10,19 @@ const eraseBtn = document.querySelector("#erase-button");
 const filterBtn = document.querySelector("#filter-select");
 
 let oldInputValue;
+let todos = [];
 
 // Funções
+
+const saveToLocalStorage = () => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+};
+
+const getFromLocalStorage = () => {
+  const savedTodos = localStorage.getItem("todos");
+  todos = savedTodos ? JSON.parse(savedTodos) : [];
+};
+
 const saveToDo = (taskId, taskName, done = 0) => {
   const toDo = document.createElement("div");
   toDo.classList.add("to-do");
@@ -38,6 +49,10 @@ const saveToDo = (taskId, taskName, done = 0) => {
 
   toDoList.appendChild(toDo);
 
+  const todoItem = { id: taskId, name: taskName, done: done };
+  todos.push(todoItem);
+  saveToLocalStorage();
+
   toDoInput.value = "";
   toDoInput.focus();
 };
@@ -56,6 +71,14 @@ const updateToDo = (taskId, taskName) => {
       toDoTitle.innerText = taskName;
     }
   });
+
+  todos.forEach((todo) => {
+    if (todo.id === taskId) {
+      todo.name = taskName;
+    }
+  });
+
+  saveToLocalStorage();
 };
 
 const getSearchedTodos = (search) => {
@@ -176,11 +199,29 @@ filterBtn.addEventListener("change", (e) => {
 // Conexão com o backend
 const baseURL = "http://localhost:3003/tasks";
 
-const postTaskBackend = (taskName) => {
+const fazPost = async (baseURL, body) => {
+  console.log("body:", body);
+  let request = new XMLHttpRequest();
+  request.open("POST", baseURL, true);
+  request.setRequestHeader("Content-type", "application/json");
+  request.send(JSON.stringify(body));
+
+  request.onload = function () {
+    console.log(this.responseText);
+  };
+
+  return request.responseText;
+};
+
+const postTaskBackend = async (taskName) => {
+  taskName = toDoInput.value;
   const data = { task_name: taskName };
+  console.log(taskName);
+
+  fazPost(baseURL, data);
 
   axios
-    .post(baseURL, data)
+    .post(baseURL, JSON.stringify(data))
     .then((response) => {
       const { id, task_name, done } = response.data.task;
       saveToDo(id, task_name, done);
@@ -195,86 +236,7 @@ const getTaskBackend = (taskId) => {
     .get(`${baseURL}/${taskId}`)
     .then((response) => response.data)
     .catch((error) => {
-      console.log("Error:", error);
-    });
-};
-
-const toggleTaskStatusBackend = (taskId, done) => {
-  getTaskBackend(taskId)
-    .then((task) => {
-      const updatedTask = {
-        ...task,
-        done: done
-      };
-
-      axios
-        .put(`${baseURL}/${taskId}`, updatedTask)
-        .then((response) => {
-          console.log("Success:", response);
-        })
-        .catch((error) => {
-          console.log("Error:", error);
-        });
+      console.log("Error:", error)
     })
-    .catch((error) => {
-      console.log("Error:", error);
-    });
-};
-
-const deleteTaskBackend = (taskId) => {
-  axios
-    .delete(`${baseURL}/${taskId}`)
-    .then((response) => {
-      console.log("Success:", response);
-    })
-    .catch((error) => {
-      console.log("Error:", error);
-    });
-};
-
-const updateTaskBackend = (oldTaskName, newTaskName) => {
-  getTaskBackend(oldTaskName)
-    .then((task) => {
-      const updatedTask = {
-        ...task,
-        task_name: newTaskName
-      };
-
-      axios
-        .put(`${baseURL}/${updatedTask.id}`, updatedTask)
-        .then((response) => {
-          console.log("Success:", response);
-          updateToDo(task.id, newTaskName);
-        })
-        .catch((error) => {
-          console.log("Error:", error);
-        });
-    })
-    .catch((error) => {
-      console.log("Error:", error);
-    });
-};
-
-const getTasksBackend = () => {
-  return axios
-    .get(baseURL)
-    .then((response) => response.data)
-    .catch((error) => {
-      console.log("Error:", error);
-    });
-};
-
-const loadTodos = async () => {
-  try {
-    const tasks = await getTasksBackend();
-
-    tasks.forEach((task) => {
-      saveToDo(task.id, task.task_name, task.done);
-    });
-  } catch (error) {
-    console.log("Error:", error);
-  }
-};
-
-loadTodos();
+}
 
