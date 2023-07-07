@@ -56,60 +56,17 @@ Para ter uma copia local, siga os passos abaixo:
 
 1. Clone do repositório
    ```sh
-   git clone https://github.com/lucasbreiafullstack/to-do-list-backend
-   ```
-   
-2. Install NPM TypeScript packages 
-  ```sh
-  npm init -y (cria package.json)
-  ```
-  ```sh
-  npm i -g typescript (faz só 1 vez)
-  ```
-  ```sh
-  npm i typescript -D (instala typescript no projeto)
-  ```
-  ```sh
-  npx tsc -init (criar tsconfig.json)
-  ```
-  
-3. Install NPM Express packages 
-  
-  ```sh
-  npm install express
-  ```
-  ```sh
-  npm install @types/express -D
-  ```
-  
-4. Install NPM Cors packages 
-  
-  ```sh
-  npm install cors
-  ```
-  ```sh
-  npm install @types/cors -D
-  ```
-  
-5. Install NPM Node packages 
-  
-  ```sh
-  npm install ts-node-dev -D
-  ```
-6. Run NPM developer
-
-  ```sh
-  npm run dev
+   https://github.com/lucasbreiafullstack/to-do-list
    ```
 ## Uso
 
-Uma API onde pode ser criado uma lista de tarefas. 
+Uma To-do-list para organizar suas tarefas.
 
 ## Contato
 
 Lucas Breia  - lucas.devfullstack021@gmail.com
 
-Project Link: [https://github.com/lucasbreiafullstack/to-do-list-backend](https://github.com/lucasbreiafullstack/to-do-list-backend)
+Project Link: [https://to-do-list-wheat-kappa.vercel.app/](https://to-do-list-wheat-kappa.vercel.app/)
 <br/>
 
 [![Linkedin](https://img.shields.io/badge/linkedin-%230A66C2.svg?&style=for-the-badge&logo=linkedin&logoColor=white&link=https://www.linkedin.com/in/andrejaques/)](https://www.linkedin.com/in/lucas-breia/)
